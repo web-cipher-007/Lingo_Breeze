@@ -18,13 +18,11 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 const COLLECTION_NAME = 'vocabulary';
 
-/**
- * @route   GET /api/words
- * @desc    Retrieve all vocabulary words from Firestore
- */
-app.get('/api/words', async (req, res) => {
+// Support both /api/words and /words so older clients continue to work.
+const getWordsHandler = async (req, res) => {
   try {
     const snapshot = await db.collection(COLLECTION_NAME).orderBy('createdAt', 'desc').get();
     
@@ -45,13 +43,9 @@ app.get('/api/words', async (req, res) => {
     console.error('Error fetching words:', error);
     return res.status(500).json({ error: 'Failed to retrieve vocabulary words.' });
   }
-});
+};
 
-/**
- * @route   POST /api/words
- * @desc    Create/Save a new vocabulary word to Firestore
- */
-app.post('/api/words', async (req, res) => {
+const createWordHandler = async (req, res) => {
   try {
     const { word, meaning, translation } = req.body;
 
@@ -82,9 +76,21 @@ app.post('/api/words', async (req, res) => {
     console.error('Error saving word:', error);
     return res.status(500).json({ error: 'Failed to save vocabulary word.' });
   }
-});
+};
+
+/**
+ * @route   GET /api/words, /words
+ * @desc    Retrieve all vocabulary words from Firestore
+ */
+app.get(['/api/words', '/words'], getWordsHandler);
+
+/**
+ * @route   POST /api/words, /words
+ * @desc    Create/Save a new vocabulary word to Firestore
+ */
+app.post(['/api/words', '/words'], createWordHandler);
 
 // start server
-app.listen(PORT, () => {
-  console.log(` LingoBreeze API server is running on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`LingoBreeze API server is running on http://${HOST}:${PORT}`);
 });
