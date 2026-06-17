@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/vocabulary_word_model.dart';
 
 class VocabularyRemoteDataSource {
-  final String baseUrl = 'http://192.168.254.183:3000/';
+  final String baseUrl = 'http://192.168.1.77:3000/';
   final http.Client client;
 
   VocabularyRemoteDataSource({required this.client});
