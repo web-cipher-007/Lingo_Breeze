@@ -3,7 +3,7 @@ const cors = require('cors');
 const admin = require('firebase-admin');
 require('dotenv').config();
 
-// 1. Initialize Firebase Admin SDK
+// Init Firebase Admin SDK
 const serviceAccount = require('./serviceAccountKey.json');
 
 admin.initializeApp({
@@ -13,7 +13,7 @@ admin.initializeApp({
 const db = admin.firestore();
 const app = express();
 
-// 2. Middleware
+// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -55,7 +55,7 @@ app.post('/api/words', async (req, res) => {
   try {
     const { word, meaning, translation } = req.body;
 
-    // Validation (Matching Flutter requirements: Word, Meaning, Translation are mandatory)
+    // Validation (Matching requirements: Word, Meaning, Translation)
     if (!word || !meaning || !translation) {
       return res.status(400).json({ 
         error: 'Missing required fields. Word, meaning, and translation are all required.' 
@@ -69,7 +69,7 @@ app.post('/api/words', async (req, res) => {
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
-    // Save directly to Firestore
+    // Save to Firestore
     const docRef = await db.collection(COLLECTION_NAME).add(newWordData);
     
     // Return the newly created object along with its generated ID
@@ -84,7 +84,7 @@ app.post('/api/words', async (req, res) => {
   }
 });
 
-// Start Server
+// start server
 app.listen(PORT, () => {
-  console.log(`🚀 LingoBreeze API server is flying on http://localhost:${PORT}`);
+  console.log(` LingoBreeze API server is running on http://localhost:${PORT}`);
 });
