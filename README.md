@@ -1,18 +1,98 @@
-# LingoBreeze – Vocabulary Deck Feature
+# LingoBreeze – Vocabulary Deck
 
-LingoBreeze is a language-learning companion application designed to help users systematically save, organize, and read custom vocabulary cards. This codebase represents a complete end-to-end slice implementation consisting of a Node.js REST API layer backed by Google Cloud Firestore and a modern Flutter client.
+A language-learning companion app to save, organize, and review custom vocabulary cards — built with Flutter and powered by a Node.js + Firestore backend.
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <b>Empty State</b><br/><br/>
+      <img src="https://github.com/user-attachments/assets/d5718c59-3d11-48d8-9617-143a56a50c92" alt="Empty State" width="100%"/>
+    </td>
+    <td align="center" width="33%">
+      <b>Add Word</b><br/><br/>
+      <img src="https://github.com/user-attachments/assets/a29e7113-7000-411d-9679-2186bea66178" alt="Add Word Form" width="100%"/>
+    </td>
+    <td align="center" width="33%">
+      <b>Card Deck</b><br/><br/>
+      <img src="https://github.com/user-attachments/assets/17286dc7-a6a6-40ef-8f84-0517ff800ce1" alt="Filled Vocabulary List" width="100%"/>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## 🏗️ Architecture & Technical Stack
+## Tech Stack
 
-The architecture focuses strictly on separation of concerns, high maintainability, and loose coupling between data streams and user views.
+| Layer | Technology |
+|-------|-----------|
+| Mobile | Flutter + Riverpod (Material 3) |
+| Backend | Node.js + Express |
+| Database | Google Cloud Firestore |
 
-### Mobile Framework (Flutter)
-* **Architecture Layering:** Domain (Pure business entities), Data (Models & HTTP Remote sources), Presentation (UI Layouts & Riverpod controllers).
-* **State Management:** Asynchronous Notifier providers via **Riverpod** for robust reactive state mapping.
-* **UI/UX Design Standard:** Material 3 implementation incorporating tailored Loading, Error, Empty, and Filled interaction flows.
+**Flutter Architecture:** Domain → Data (Models & HTTP) → Presentation (Riverpod Notifiers)
 
-### Backend Framework (Node.js)
-* **API Runtime Engine:** Node.js paired with an Express routing framework.
-* **Database Integration:** Document-oriented NoSQL persistence utilizing the official **Google Firebase Admin SDK**.
+---
+
+## Prerequisites
+
+| Tool | Version |
+|------|---------|
+| Flutter SDK | 3.x |
+| Dart SDK | 3.x |
+| Node.js | 18.x |
+| Firebase Project | Firestore enabled |
+
+---
+
+## Getting Started
+
+### 1. Run the Backend
+
+```bash
+cd backend
+npm install
+```
+
+Place your Firebase service account credentials file (named exactly `serviceAccountKey.json`) inside the `backend/` folder, then start the server:
+
+```bash
+node server.js
+```
+
+The API will be available at `http://localhost:3000`.
+
+### 2. Set Your Local IP
+
+Open `mobile/lib/features/vocabulary/data/repositories/vocabulary_remote_datasource.dart` and replace the placeholder with your machine's local network IP (find it via `ip a` / `ifconfig` on macOS/Linux or `ipconfig` on Windows):
+
+```dart
+// ⚠️ Replace with your machine's local IP
+final String baseUrl = 'http://YOUR_LOCAL_IP_HERE:3000/api';
+```
+
+### 3. Run the Flutter App
+
+```bash
+cd mobile
+flutter clean && flutter pub get
+flutter run
+```
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/vocabulary` | Fetch all vocabulary cards |
+| `POST` | `/api/vocabulary` | Add a new vocabulary card |
+| `DELETE` | `/api/vocabulary/:id` | Delete a card by ID |
+
+---
+
+## Features
+
+- **Empty state** — illustrated prompt shown when the word list is blank
+- **Add word** — modal bottom sheet with mandatory field validation
+- **Instant sync** — Riverpod state updates the list immediately on save without a manual reload
+- **Pull-to-refresh** — swipe down to fetch the latest cards from Firestore
